@@ -1,0 +1,90 @@
+
+## Automated High-Fidelity Rule Generation Agent for capa (with PoC)
+
+| Personal Details | Description |
+| :--- | :--- |
+| **Name** | Xunairah Balouch |
+| **Organization Details** | Mandiant (capa) |
+| **Track** | 350 Hours (Large Project) |
+| **Expected Graduation** | June 2026 |
+| **Contact Details** | xunairahbalouch@gmail.com |
+| **Current Timezone** | Pakistan Standard Time |
+| **GitHub Profile** | [https://github.com/YOUR_USERNAME](https://github.com/YOUR_USERNAME) |
+| **LinkedIn Profile** | [https://www.linkedin.com/in/xunairah-balouch](https://www.linkedin.com/in/xunairah-balouch) |
+| **Portfolio Website** | [https://YOUR_PORTFOLIO.com](https://YOUR_PORTFOLIO.com) |
+
+### Project Proposal
+
+*   **Title:** Automated High-Fidelity Rule Generation Agent for capa (with PoC)
+*   **Project Overview:** The primary bottleneck in malware rule creation is not the generation of logic, but the verification of it. While Large Language Models (LLMs) can generate YAML, they frequently produce "noisy" outputs that fail syntax validation or lack grounding in official documentation. 
+    
+    This project proposes an **Autonomous AI Agent** that implements a **Closed-Loop Verification Pipeline**. By integrating the `scripts.lint` utility, an automated MSDN grounding scraper, and empirical validation against `capa-testfiles`, the agent provides maintainers with **Pre-Validated Pull Requests** that meet production standards. This ensures that every rule generated is not just syntactically correct, but logically verified against real-world malware samples.
+
+### Specification
+
+1.  **Architecture:** Modular Python-based agent designed as a wrapper for the `capa` engine. It utilizes an **Actor-Critic** feedback loop where the LLM (Actor) generates rules and the Python-based linter/scraper (Critic) provides automated technical correction.
+2.  **Grounding (Source Normalization):** A source-agnostic preprocessing pipeline using `BeautifulSoup` and `Trafilatura`. It converts raw HTML from MSDN and technical blogs into "Clean Markdown," allowing the LLM to focus strictly on API parameters and DLL constants without UI noise.
+3.  **Linter Feedback Loop:** The system parses `stderr` from the `capa` linter. If a schema violation is detected (e.g., incorrect scope or namespace), the error is isolated and injected as a **"Correction Hint"** back into the generator prompt to prevent "guessing" and ensure adherence to the `capa` schema.
+4.  **Semantic Validation:** Rules are empirically cross-checked by executing `capa -r [new_rule.yml] [test_sample.exe]` against the `capa-testfiles` repository. If a rule intended to detect a specific behavior fails to trigger on a known sample, it is flagged for logic revision.
+5.  **Data Integrity:** Implemented hashing using Python's `hashlib` to match rules with specific malware samples (the "GPS Coordinate" system), ensuring every rule is backed by verified MD5/SHA-256 evidence.
+6.  **Error Handling:** Robust error handling following `capa`'s implementation guidelines, specifically for network timeouts during scraping and YAML parsing exceptions.
+7.  **Audit Logging:** All agent actions, including linter failures and successful matches, are logged to provide a clear audit trail for Mandiant maintainers.
+8.  **Testing:** The PoC includes a mock linter environment and test suite to demonstrate the feedback loop without requiring a full malware lab setup.
+9.  **Documentation:** Comprehensive technical documentation provided in Markdown, detailing the installation of dependencies (`BeautifulSoup4`, `pyYAML`) and prototype execution.
+
+### Proof of Concept (PoC)
+
+To support my claims and demonstrate technical feasibility, I developed a working prototype of the core pipeline components.
+
+**Key implementations in the PoC include:**
+*   **Automated Grounding Scraper:** Successfully extracts function syntax and required libraries (e.g., `Kernel32.dll`) from Windows API documentation.
+*   **Actor-Critic Linter Feedback:** A logic loop that catches "hallucinated" YAML syntax and generates human-readable correction prompts for the generation engine.
+*   **Nursery Audit Logic:** Analysis of the `capa-rules/nursery` folder to identify "example-less" rules that require high-fidelity evidence.
+*   **Local Environment Configuration:** Successfully configured a local development environment using Python 3.12 and editable `pip` installs for the `capa` engine to facilitate real-time testing.
+
+### Links
+*   **GitHub Repo:** [https://github.com/YOUR_USERNAME/capa-rule-automation-agent](https://github.com/YOUR_USERNAME/capa-rule-automation-agent)
+*   **YouTube Video:** [Insert Link to Demo Video]
+
+### Additional Information
+
+*   The term "Grounding" is utilized to describe the process of ensuring an AI agent's output is backed by empirical evidence (Source Code or Hashing) rather than probabilistic logic.
+*   During the development of the PoC, I focused on bridging the gap between complex C/C++ source code logic found in MSDN and the specific YAML schema requirements of `capa` through an automated feedback architecture.
+*   **A few architectural considerations from the PoC phase:**
+    *   "I implemented a `User-Agent` rotation concept to ensure the scraper maintains access to documentation sources during high-volume processing."
+    *   "To optimize rule accuracy, the agent prioritizes filtering for specific namespaces (e.g., `communication`) before committing to the full rule generation phase."
+    *   "I have integrated a 'Deterrence' factor into the linter feedback to handle scenarios where the engine generates syntactically correct but noisy rules."
+
+### Use Cases
+
+1.  **Scaling Rule Production:** Allows Mandiant analysts to focus on high-level review by using an agent to generate the "First Draft" of rules based on new malware reports.
+2.  **Nursery Promotion:** Automatically promotes "unverified" rules from the nursery to the main ruleset by finding matching samples in the `capa-testfiles` repo.
+3.  **Real-Time Intelligence:** Enables the generation of detection rules within minutes of a new malware campaign being documented on technical blogs.
+
+### Features
+
+1.  **Actor-Critic Loop:** This approach prevents "hallucinated" logic. By forcing the generator to interpret the `stderr` from the `capa` linter, the agent adapts to the required schema autonomously.
+2.  **Modular Scraper:** The `grounding_scraper.py` uses landmark-based scraping that can be adapted for various technical documentation sources and repositories.
+3.  **Semantic Verification:** Utilizing the `capa-testfiles` repository allows for automated "Ground Truth" verification—proving a rule works on real bits before human review.
+4.  **Audit Logs:** Every failure of the generator is logged, providing crucial data for engineers to understand the specific logical edge cases encountered during rule creation.
+
+### Technical Skills and Relevant Experience
+
+*   **Languages & Frameworks:** Python (requests, BeautifulSoup, hashlib, subprocess), YAML, Git/GitHub, Markdown.
+*   **Domain Knowledge:** Malware Analysis fundamentals, Windows API logic (Win32), Boolean Logic (and, or, not).
+*   **Professional Trajectory:** At 18, serving as a Technical CMO has provided me with deep architectural knowledge of proxy infrastructure and network routing. This experience is critical for generating high-fidelity rules in the communication and socket namespaces.
+
+### Implementation Timeline and Milestones (12-Week Plan)
+
+*   **Week 1-3 (The Foundation):**
+    *   Audit the `rules/nursery` to identify common rejection patterns.
+    *   Submit manual high-quality rules to establish rapport and master the schema.
+*   **Week 4-6 (The Actor):**
+    *   Build the Python-based feedback wrapper that interprets `scripts.lint` errors.
+    *   Implement "Self-Healing" logic for autonomous correction of YAML syntax.
+*   **Week 7-9 (The Critic/Grounding):**
+    *   Integrate the `BeautifulSoup/MSDN` scraping pipeline for documentation-based grounding.
+    *   Develop logic to identify and prevent logically "dead" rules through semantic checks.
+*   **Week 10-12 (The Pipeline):**
+    *   Full integration of the `capa -r` test suite into the agent workflow.
+    *   Final CLI tool delivery that takes a "Malware Description" and outputs a **Verified .yml**.
