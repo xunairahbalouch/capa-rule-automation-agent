@@ -1,6 +1,5 @@
-# Automated High-Fidelity Rule Generation Agent — Prototype
+# Automated High-Fidelity Rule Generation Agent: Prototype
 
-**GSoC 2026 · Mandiant (capa) · Candidate: Xunairah Balouch**  
 **Track:** 350 Hours (Large Project) · **Discussion Thread:** [flare-gsoc#106](https://github.com/mandiant/flare-gsoc/discussions/106)
 
 ---
@@ -20,41 +19,41 @@ systematically.
 ┌──────────────────────────────────────────────────────────────┐
 │                  Closed-Loop Pipeline                        │
 │                                                              │
-│   User / Issue   ──►  [ grounding_scraper.py ]              │
-│                               │                             │
+│   User / Issue   ──►  [ grounding_scraper.py ]               │
+│                               │                              │
 │                    Structured API Context                    │
-│                               │                             │
-│                               ▼                             │
+│                               │                              │
+│                               ▼                              │
 │                         [ LLM Actor ]                        │
-│                               │                             │
+│                               │                              │
 │                       Draft YAML Rule                        │
-│                               │                             │
-│                               ▼                             │
+│                               │                              │
+│                               ▼                              │
 │                    [ linter_feedback.py ]                    │
 │                      MockCapaLinter                          │
-│                               │                             │
-│             ┌─── PASS ────────┴──── FAIL ───┐              │
-│             │                               │              │
-│             ▼                               ▼              │
-│       PR-Ready Rule              [ Critic Module ]          │
-│                                  Correction Hints           │
-│                                       │                     │
-│                                       └──► [ LLM Actor ]   │
-│                                           (next iteration)  │
+│                               │                              │
+│             ┌─── PASS ────────┴──── FAIL ───┐                │
+│             │                               │                │
+│             ▼                               ▼                │
+│       PR-Ready Rule              [ Critic Module ]           │
+│                                  Correction Hints            │
+│                                       │                      │
+│                                       └──► [ LLM Actor ]     │
+│                                           (next iteration)   │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Module 1: `grounding_scraper.py`
+Module 1: `grounding_scraper.py`
 
-### What It Solves
+- What It Solves
 
 LLMs hallucinate DLL names, parameter counts, and flag constants because their
 training data contains noisy, sometimes contradictory documentation.  The scraper
 eliminates this noise at the source.
 
-### Architecture
+Architecture:
 
 | Component | Role |
 |---|---|
@@ -62,7 +61,7 @@ eliminates this noise at the source.
 | `ApiGroundingContext` | Typed dataclass holding all extracted signal |
 | `to_llm_prompt_block()` | Serialises context to an LLM-injectable Markdown block |
 
-### Extraction Strategy
+Extraction Strategy:
 
 The scraper uses **landmark anchors** — heading IDs that Microsoft bakes into every
 function page (`#syntax`, `#parameters`, `#return-value`, `#requirements`) — rather
@@ -268,7 +267,7 @@ component is fully implemented and testable without external services.
 
 ## Technical Notes for Reviewers
 
-**Why `scripts.lint` is mocked rather than called directly:**  
+Why `scripts.lint` is mocked rather than called directly:
 The mock is intentionally higher-signal for a prototype: it emits structured,
 typed diagnostics that the Critic can parse without regex.  Production integration
 will parse the actual `scripts.lint` stderr using the same `LintDiagnostic` model.
@@ -278,15 +277,9 @@ Trafilatura excels at article-style content extraction but discards the structur
 HTML tables that carry Requirements data.  BeautifulSoup's landmark-anchor approach
 preserves table structure while still ignoring navigation, ads, and sidebar noise.
 
-**Namespace and scope lists:**  
+Namespace and scope lists:
 These are sourced directly from `rules/format.md` in the `mandiant/capa` repository
 and `capa/rules.py` (the `Scope` enum).  They will be kept in sync via a nightly
 CI job that diffs the canonical sources against the agent's internal constants.
 
----
 
-## Contact
-
-- **Email:** xunairahbalouch@gmail.com  
-- **LinkedIn:** [linkedin.com/in/xunairah-balouch](https://www.linkedin.com/in/xunairah-balouch)  
-- **Discussion Thread:** [github.com/mandiant/flare-gsoc/discussions/106](https://github.com/mandiant/flare-gsoc/discussions/106)
