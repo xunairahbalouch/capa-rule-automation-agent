@@ -13,7 +13,8 @@ designed to automate the production of verified malware detection rules.
 | Organization | Mandiant (capa) |
 | Track | 350 Hours (Large Project) |
 | Graduation | June 2026 |
-
+| Linkedin   | https://www.linkedin.com/in/xunairah-balouch/ |
+| Email | xunairahbalouch@gmail.com |
 
 ---
 
